@@ -10,6 +10,7 @@ keytimes=[]
 lastkeytime=0
 starttime=0
 wrongkeys=0
+fname=""
 text = open("TestText.txt", "r")
 textstr=""
 vergleichstext=[]
@@ -87,20 +88,13 @@ def move_cursor():
 
     
 def conclude():
-    global starttime,completed
+    global starttime,completed, fname
     completed=1
     root.unbind("<Key>")
     zeit=time.time()-starttime
     entry.itemconfig(cursor,state='hidden')
     timelabel.config(text=str(round(zeit,2))+" Sekunden")
 #---------------------------
-    nr=1
-    path="data/results_"
-    path2="data\\results_"
-    while(Path(path+"0"*(10-int(math.log(nr,10)))+str(nr)+".txt").is_file()):
-        nr+=1
-    fname=(path2+"0"*(10-int(math.log(nr,10)))+str(nr)+".txt")
-
     file=open(fname,"w")
     file.write("TextID:\t" + m.hexdigest()+"\n")
     file.write("Gesamtzeit:\t" + str(round(zeit,2))+" Sekunden\n")
@@ -109,27 +103,29 @@ def conclude():
     file.write("Fehlerquote:\t" + str(round(wrongkeys*100/(len(keytimes)+wrongkeys),2))+"%\n")
     file.write("Gesamtfehler:\t" + str(wrongkeys)+"\n\n--------------------------------------------------\n")
     for element in keytimes:
-        file.write(element[0]+"\t"+str(element[1])+"\t"+str(element[2])+"\n")
+        erg=""
+        for sp in element:
+            erg+=str(sp)+"\t"
+        file.write(erg+"\n")
     file.close()
 #-----------------------------------
 def reset():
     global starttime,lastkeytimes,keytimes,wrongkeys,completed
-    #---------------------------
-    if(completed==0 and len(keytimes[0])==3):
-        nr=1
-        path="data/results_incomplete_"
-        path2="data\\results_incomplete_"
-        while(Path(path+"0"*(10-int(math.log(nr,10)))+str(nr)+".txt").is_file()):
-            nr+=1
-        fname=(path2+"0"*(10-int(math.log(nr,10)))+str(nr)+".txt")
+    lastkeytime=0
+    completed=0
+    starttime=0
+    wrongkeys=0
+    #-----------------------------
+    timelabel.config(text="")
+    entry.itemconfig(cursor,fill="lightgrey",state='normal')
+    entry.delete("deletable")
+    cursorpos[1]=0
+    cursorpos[0]=0
+    entry.coords(cursor,buchstabe_x*cursorpos[0],buchstabe_y*cursorpos[1],buchstabe_x*(cursorpos[0]+1),buchstabe_y*(cursorpos[1]+1))
+    root.bind("<Key>",callback)
 
-        file=open(fname,"w")
-        for element in keytimes:
-            if(len(element)==3):
-                file.write(element[0]+"\t"+str(element[1])+"\t"+str(element[2])+"\n")
-        file.close()
-    #-----------------------------------
-    
+def reset_all():
+    global starttime,lastkeytimes,keytimes,wrongkeys,completed,fname
     keytimes=[]
     for y in range(len(vergleichstext)):
         for x in range(len(vergleichstext[y])):
@@ -138,6 +134,13 @@ def reset():
     completed=0
     starttime=0
     wrongkeys=0
+    #-----------------------------
+    nr=1
+    path="data/results_"
+    path2="data\\results_"
+    while(Path(path+"0"*(10-int(math.log(nr,10)))+str(nr)+".txt").is_file()):
+        nr+=1
+    fname=(path2+"0"*(10-int(math.log(nr,10)))+str(nr)+".txt")
     #-----------------------------
     timelabel.config(text="")
     entry.itemconfig(cursor,fill="lightgrey",state='normal')
@@ -164,10 +167,16 @@ txt=entry.create_text(1,1,anchor=NW,font=schriftart,text=textstr)
 resetbutton=Button(root,text="Reset",command=reset)
 resetbutton.grid(column=0,row=1)
 
+menubar=Menu(root)
+submenu=Menu(menubar)
+submenu.add_command(label="New User", command=reset_all)
+menubar.add_cascade(label="File",menu=submenu)
+root.config(menu=menubar)
+
 timelabel=Label(root,text="")
 timelabel.grid(column=1,row=1)
 
-reset()
+reset_all()
 root.mainloop()
 
 
