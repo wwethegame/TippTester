@@ -1,5 +1,6 @@
 from tkinter import *
 import time
+import hashlib
 from pathlib import Path
 import math
 
@@ -16,7 +17,11 @@ vergleichstext=[]
 for line in text:
     textstr+=(line.rstrip())
 text.close()
+#------------------------
+m = hashlib.md5()
+m.update(textstr.encode('utf-8'))
 
+#------------------------
 schriftart=('Courier','24')
 
 buchstabe_x=19
@@ -97,6 +102,7 @@ def conclude():
     fname=(path2+"0"*(10-int(math.log(nr,10)))+str(nr)+".txt")
 
     file=open(fname,"w")
+    file.write("TextID:\t" + m.hexdigest()+"\n")
     file.write("Gesamtzeit:\t" + str(round(zeit,2))+" Sekunden\n")
     file.write("Zeichenzahl:\t" + str(len(keytimes))+"\n")
     file.write("TpM:\t" + str(round(len(keytimes)/zeit*60,2))+"\n")
