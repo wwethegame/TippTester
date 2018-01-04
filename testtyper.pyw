@@ -122,7 +122,8 @@ def reset():
     starttime=0
     wrongkeys=0
     #-----------------------------
-    timelabel.config(text="")
+    if(disptime):
+        timelabel.config(text="")
     entry.itemconfig(cursor,fill="lightgrey",state='normal')
     entry.delete("deletable")
     cursorpos[1]=0
@@ -148,7 +149,8 @@ def reset_all():
         nr+=1
     fname=(path2+"0"*(10-int(math.log(nr,10)))+str(nr)+".txt")
     #-----------------------------
-    timelabel.config(text="")
+    if(disptime):
+        timelabel.config(text="")
     entry.itemconfig(cursor,fill="lightgrey",state='normal')
     entry.delete("deletable")
     cursorpos[1]=0
