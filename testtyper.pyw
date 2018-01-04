@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter
 import time
 import hashlib
 from pathlib import Path
@@ -9,6 +10,7 @@ local_wrongkey=0
 keytimes=[]
 lastkeytime=0
 starttime=0
+disptime=1
 wrongkeys=0
 fname=""
 text = open("TestText.txt", "r")
@@ -46,6 +48,7 @@ textend=[ len(vergleichstext[len(vergleichstext)-1])-1, len(vergleichstext)-1]
 for y in range(len(vergleichstext)):
     for x in range(len(vergleichstext[y])):
                    keytimes+=[[vergleichstext[y][x]]]
+
 
 #---------------------------------------------------
 
@@ -88,12 +91,15 @@ def move_cursor():
 
     
 def conclude():
-    global starttime,completed, fname
+    global starttime,completed, fname,disptime
     completed=1
     root.unbind("<Key>")
     zeit=time.time()-starttime
     entry.itemconfig(cursor,state='hidden')
-    timelabel.config(text=str(round(zeit,2))+" Sekunden")
+
+    if(disptime):
+        timelabel.config(text=str(round(zeit,2))+" Sekunden")
+    
 #---------------------------
     file=open(fname,"w")
     file.write("TextID:\t" + m.hexdigest()+"\n")
@@ -149,7 +155,13 @@ def reset_all():
     cursorpos[0]=0
     entry.coords(cursor,buchstabe_x*cursorpos[0],buchstabe_y*cursorpos[1],buchstabe_x*(cursorpos[0]+1),buchstabe_y*(cursorpos[1]+1))
     root.bind("<Key>",callback)
-
+def toggle_time():
+    global disptime
+    disptime=(disptime+1)%2
+    if(disptime==0):
+        timelabel.config(text="Zeitanzeige deaktiviert!")
+    else:
+        timelabel.config(text="")
     
 root=Tk()
 root.title("TippTestTool")
@@ -170,6 +182,7 @@ resetbutton.grid(column=0,row=1)
 menubar=Menu(root)
 submenu=Menu(menubar)
 submenu.add_command(label="New User", command=reset_all)
+submenu.add_command(label="Toggle Time Display",command=toggle_time)
 menubar.add_cascade(label="File",menu=submenu)
 root.config(menu=menubar)
 
