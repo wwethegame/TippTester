@@ -8,6 +8,7 @@ import math
 completed=0
 local_wrongkey=0
 keytimes=[]
+keydata=[]
 lastkeytime=0
 starttime=0
 disptime=1
@@ -48,7 +49,10 @@ textend=[ len(vergleichstext[len(vergleichstext)-1])-1, len(vergleichstext)-1]
 for y in range(len(vergleichstext)):
     for x in range(len(vergleichstext[y])):
                    keytimes+=[[vergleichstext[y][x]]]
-
+keydata+=[["t"]]
+keydata+=[["tpm"]]
+keydata+=[["fehler"]]
+keydata+=[["gesamtf"]]
 
 #---------------------------------------------------
 
@@ -101,13 +105,25 @@ def conclude():
         timelabel.config(text=str(round(zeit,2))+" Sekunden")
     
 #---------------------------
+
+    keydata[0]+=[str(round(zeit,2))]
+    keydata[1]+=[str(round(len(keytimes)/zeit*60,2))]
+    keydata[2]+=[str(round(wrongkeys*100/(len(keytimes)+wrongkeys),2))]
+    keydata[3]+=[str(wrongkeys)]
+    
     file=open(fname,"w")
     file.write("TextID:\t" + m.hexdigest()+"\n")
-    file.write("Gesamtzeit:\t" + str(round(zeit,2))+" Sekunden\n")
     file.write("Zeichenzahl:\t" + str(len(keytimes))+"\n")
-    file.write("TpM:\t" + str(round(len(keytimes)/zeit*60,2))+"\n")
-    file.write("Fehlerquote:\t" + str(round(wrongkeys*100/(len(keytimes)+wrongkeys),2))+"%\n")
-    file.write("Gesamtfehler:\t" + str(wrongkeys)+"\n\n--------------------------------------------------\n")
+    file.write("\n--------------------------------------------------\n")
+
+    for element in keydata:
+        erg=str(element[0])+"\t"
+        for sp in range(1,len(element)):
+            erg+=str(element[sp])+"\t\t"
+        file.write(erg+"\n")
+        
+    file.write("\n--------------------------------------------------\n")
+    
     for element in keytimes:
         erg=""
         for sp in element:
