@@ -113,7 +113,6 @@ def callback(event):
 
             stelle=0
             for i in range(0,cursorpos[1],1):
-                print(reihenlist)
                 stelle+=rowlength[i]
             stelle+=cursorpos[0]
                            
@@ -147,7 +146,7 @@ def move_cursor():
     
 def conclude():
     global starttime,completed, fname,disptime
-    resetbutton.config(state="normal")
+    #resetbutton.config(state="normal")
     completed=1
     root.unbind("<Key>")
     zeit=time.time()-starttime
@@ -185,6 +184,12 @@ def conclude():
 #-----------------------------------
 def reset():
     global starttime,lastkeytimes,keytimes,wrongkeys,completed
+    if len(keytimes[0])!=len(keytimes[len(keytimes)-1]):
+        l=len(keytimes[0])
+        for i in range(len(keytimes)):
+            keytimes[i]=keytimes[i][:l-2]
+
+    
     lastkeytime=0
     completed=0
     starttime=0
@@ -198,7 +203,7 @@ def reset():
     cursorpos[0]=0
     entry.coords(cursor,buchstabe_x*cursorpos[0],buchstabe_y*cursorpos[1],buchstabe_x*(cursorpos[0]+1),buchstabe_y*(cursorpos[1]+1))
     root.bind("<Key>",callback)
-    resetbutton.config(state="disabled")
+    #resetbutton.config(state="disabled")
     
 def reset_all():
     global starttime,lastkeytimes,keytimes,wrongkeys,completed,fname
@@ -226,7 +231,7 @@ def reset_all():
     cursorpos[0]=0
     entry.coords(cursor,buchstabe_x*cursorpos[0],buchstabe_y*cursorpos[1],buchstabe_x*(cursorpos[0]+1),buchstabe_y*(cursorpos[1]+1))
     root.bind("<Key>",callback)
-    resetbutton.config(state="disabled")
+    #resetbutton.config(state="disabled")
 def toggle_time():
     global disptime
     disptime=(disptime+1)%2
@@ -250,7 +255,7 @@ txt=entry.create_text(1,1,anchor=NW,font=schriftart,text=textstr)
 
 resetbutton=Button(root,text="Reset",command=reset)
 resetbutton.grid(column=0,row=1)
-resetbutton.config(state="disabled")
+#resetbutton.config(state="disabled")
 
 menubar=Menu(root)
 submenu=Menu(menubar)
