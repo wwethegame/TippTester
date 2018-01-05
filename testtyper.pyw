@@ -14,13 +14,16 @@ starttime=0
 disptime=1
 wrongkeys=0
 fname=""
-text = open("TestText.txt", "r")
 textstr=""
 vergleichstext=[]
 
+text = open("TestText.txt", "r")
 for line in text:
     textstr+=(line.rstrip())
 text.close()
+textstr=textstr.replace("$","")
+textlength=len(textstr)
+
 #------------------------
 m = hashlib.md5()
 m.update(textstr.encode('utf-8'))
@@ -31,24 +34,62 @@ schriftart=('Courier','24')
 buchstabe_x=19
 buchstabe_y=36
 
+################################################################################################
+
+textstr=""
+text = open("TestText.txt", "r")
+for line in text:
+    textstr+=(line.rstrip())
+text.close()
+textstr=textstr.split("$")
 ##########################Fensterbreite kann man hier einstellen
 breite=1000
 ##########################
 
 spalten=int(breite/buchstabe_x)
-reihen=int(len(textstr)/spalten)+1
-hoehe=buchstabe_y*(reihen)
-for i in range(reihen-1,0,-1):
-    vergleichstext+=[textstr[i*spalten:(i+1)*spalten]]
-    textstr=textstr[0:i*spalten]+"\n"+textstr[i*spalten:len(textstr)]
-vergleichstext+=[textstr[0*spalten:(0+1)*spalten]]
-vergleichstext=vergleichstext[::-1]
 
+reihenlist=[]
+rowlength=[]
+
+for i in textstr:
+    reihenlist+=[int(len(i)/spalten)+1]
+reihen=0
+for i in reihenlist:
+    reihen+=i
+
+
+hoehe=buchstabe_y*(reihen)
+
+
+for j in range(len(textstr)):
+
+    for i in range(reihenlist[j]):
+        if (i==reihenlist[j]-1):
+           vergleichstext+=[textstr[j][i*spalten:]]
+           rowlength+=[len(textstr[j][i*spalten:])]
+        else:
+            vergleichstext+=[textstr[j][i*spalten:(i+1)*spalten]]
+            rowlength+=[spalten]
+
+
+textstr=""
+for i in vergleichstext:
+    textstr+=i+"\n"
+
+    
+################################################################################################
+##for i in range(reihen-1,0,-1):   
+##    vergleichstext+=[textstr[i*spalten:(i+1)*spalten]]
+##    textstr=textstr[0:i*spalten]+"\n"+textstr[i*spalten:textlength]
+##vergleichstext+=[textstr[0*spalten:(0+1)*spalten]]
+##vergleichstext=vergleichstext[::-1]
+################################################################################################
 textend=[ len(vergleichstext[len(vergleichstext)-1])-1, len(vergleichstext)-1]
 
 for y in range(len(vergleichstext)):
     for x in range(len(vergleichstext[y])):
                    keytimes+=[[vergleichstext[y][x]]]
+
 keydata+=[["t"]]
 keydata+=[["tpm"]]
 keydata+=[["fehler"]]
@@ -69,7 +110,14 @@ def callback(event):
             if lastkeytime==0:
                 lastkeytime=currenttime
 
-            keytimes[cursorpos[0]+spalten*cursorpos[1]]+=[int(round(currenttime-lastkeytime,3)*1000),local_wrongkey]
+
+            stelle=0
+            for i in range(0,cursorpos[1],1):
+                print(reihenlist)
+                stelle+=rowlength[i]
+            stelle+=cursorpos[0]
+                           
+            keytimes[stelle]+=[int(round(currenttime-lastkeytime,3)*1000),local_wrongkey]
             lastkeytime=currenttime
             
             local_wrongkey=0
@@ -87,8 +135,11 @@ def move_cursor():
     if textend==cursorpos:
         conclude()
         return
-    cursorpos[1]= cursorpos[1] + int((cursorpos[0]+1)/spalten)
-    cursorpos[0]=(cursorpos[0]+1)%spalten
+
+    next_y= cursorpos[1] + int((cursorpos[0]+1)/rowlength[cursorpos[1]])
+    next_x=(cursorpos[0]+1)%rowlength[cursorpos[1]]
+
+    cursorpos=[next_x,next_y]
     entry.coords(cursor,buchstabe_x*cursorpos[0],buchstabe_y*cursorpos[1],buchstabe_x*(cursorpos[0]+1),buchstabe_y*(cursorpos[1]+1))
     
 
