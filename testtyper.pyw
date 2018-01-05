@@ -5,6 +5,7 @@ import hashlib
 from pathlib import Path
 import math
 
+durchgaenge=0
 completed=0
 local_wrongkey=0
 keytimes=[]
@@ -145,16 +146,18 @@ def move_cursor():
 
     
 def conclude():
-    global starttime,completed, fname,disptime
+    global starttime,completed, fname,disptime,durchgaenge
     #resetbutton.config(state="normal")
     completed=1
     root.unbind("<Key>")
     zeit=time.time()-starttime
     entry.itemconfig(cursor,state='hidden')
     entry.itemconfig(txt,state='hidden')
+    entry.delete("deletable")
     if(disptime):
         timelabel.config(text=str(round(zeit,2))+" Sekunden")
-    
+    durchgaenge+=1
+    countlabel.config(text="Durchgänge: "+str(durchgaenge))
 #---------------------------
 
     keydata[0]+=[str(round(zeit,2))]
@@ -207,7 +210,7 @@ def reset():
     #resetbutton.config(state="disabled")
     
 def reset_all():
-    global starttime,lastkeytimes,keytimes,wrongkeys,completed,fname
+    global starttime,lastkeytimes,keytimes,wrongkeys,completed,fname,durchgaenge
     keytimes=[]
     for y in range(len(vergleichstext)):
         for x in range(len(vergleichstext[y])):
@@ -216,6 +219,8 @@ def reset_all():
     completed=0
     starttime=0
     wrongkeys=0
+    durchgaenge=0
+    countlabel.config(text="Durchgänge: "+str(durchgaenge))
     #-----------------------------
     nr=1
     path="data/results_"
@@ -268,6 +273,9 @@ root.config(menu=menubar)
 
 timelabel=Label(root,text="")
 timelabel.grid(column=1,row=1)
+
+countlabel=Label(root,text="Dürchgänge: "+str(durchgaenge))
+countlabel.grid(column=2,row=1)
 
 reset_all()
 root.mainloop()
