@@ -96,6 +96,7 @@ def move_cursor():
     
 def conclude():
     global starttime,completed, fname,disptime
+    resetbutton.config(state="normal")
     completed=1
     root.unbind("<Key>")
     zeit=time.time()-starttime
@@ -146,7 +147,8 @@ def reset():
     cursorpos[0]=0
     entry.coords(cursor,buchstabe_x*cursorpos[0],buchstabe_y*cursorpos[1],buchstabe_x*(cursorpos[0]+1),buchstabe_y*(cursorpos[1]+1))
     root.bind("<Key>",callback)
-
+    resetbutton.config(state="disabled")
+    
 def reset_all():
     global starttime,lastkeytimes,keytimes,wrongkeys,completed,fname
     keytimes=[]
@@ -173,6 +175,7 @@ def reset_all():
     cursorpos[0]=0
     entry.coords(cursor,buchstabe_x*cursorpos[0],buchstabe_y*cursorpos[1],buchstabe_x*(cursorpos[0]+1),buchstabe_y*(cursorpos[1]+1))
     root.bind("<Key>",callback)
+    resetbutton.config(state="disabled")
 def toggle_time():
     global disptime
     disptime=(disptime+1)%2
@@ -196,6 +199,7 @@ txt=entry.create_text(1,1,anchor=NW,font=schriftart,text=textstr)
 
 resetbutton=Button(root,text="Reset",command=reset)
 resetbutton.grid(column=0,row=1)
+resetbutton.config(state="disabled")
 
 menubar=Menu(root)
 submenu=Menu(menubar)
