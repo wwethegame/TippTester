@@ -151,7 +151,7 @@ def conclude():
     root.unbind("<Key>")
     zeit=time.time()-starttime
     entry.itemconfig(cursor,state='hidden')
-
+    entry.itemconfig(txt,state='hidden')
     if(disptime):
         timelabel.config(text=str(round(zeit,2))+" Sekunden")
     
@@ -198,6 +198,7 @@ def reset():
     if(disptime):
         timelabel.config(text="")
     entry.itemconfig(cursor,fill="lightgrey",state='normal')
+    entry.itemconfig(txt,state='normal')
     entry.delete("deletable")
     cursorpos[1]=0
     cursorpos[0]=0
@@ -226,6 +227,7 @@ def reset_all():
     if(disptime):
         timelabel.config(text="")
     entry.itemconfig(cursor,fill="lightgrey",state='normal')
+    entry.itemconfig(txt,state='normal')
     entry.delete("deletable")
     cursorpos[1]=0
     cursorpos[0]=0
