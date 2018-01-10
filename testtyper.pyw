@@ -173,7 +173,7 @@ def conclude():
     for element in keydata:
         erg=str(element[0])+"\t"
         for sp in range(1,len(element)):
-            erg+=str(element[sp])+"\t\t"
+            erg+=str(element[sp]).replace(".",",")+"\t\t"
         file.write(erg+"\n")
         
     file.write("\n--------------------------------------------------\n")
